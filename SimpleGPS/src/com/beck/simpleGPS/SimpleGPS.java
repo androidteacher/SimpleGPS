@@ -1,0 +1,108 @@
+package com.beck.simpleGPS;
+
+import java.util.List;
+
+import com.beck.simpleGPS.R;
+
+import android.app.Activity;
+import android.content.Context;
+
+
+
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+
+public class SimpleGPS extends Activity {
+  
+   String lat = "No Signal Found";
+   LocationManager lm;
+   LocationListener locationListener;
+   TextView tv;
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+       
+        super.onCreate(savedInstanceState);
+      //Initialize our layout to what is specified in main.xml
+        setContentView(R.layout.main);
+		       
+    //This is stock code to create a LocationListener
+    //We Essentially Activate the GPS Here.
+        
+           locationListener = new LocationListener() {
+           public void onLocationChanged(Location location) {
+              // Called when a new location is found by the network location provider.
+           double latitude = location.getLatitude();
+           
+           lat = "" + latitude;
+           tv.setText(lat);
+            }
+         
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+         
+            public void onProviderEnabled(String provider) {}
+         
+            public void onProviderDisabled(String provider) {}
+          };
+          //End Location Listener
+        
+          //We create a LocationManager.
+          //As you can see below LocationManager has the method 'requestLocationUpdates'
+          //that requires our locationListener above as an argument. 
+        
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+         
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        //End Location Manager Code
+        
+         tv = (TextView) findViewById(R.id.view);
+         //Initially set the text to 'No  Signal Found' (--See 'String lat' above.)
+          tv.setText(lat);
+       
+    
+
+    }
+
+    //This code creates a menu when we press the menu button.
+    // The 'quit' option stops the gps and ends the app.
+    // It utilizes /res/menu/menu.xml 
+    //This is stock code for making the menu button work.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+   
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.quit_option:
+        	lm.removeUpdates(locationListener);
+        	finish();
+            
+            return true;
+        case R.id.help:
+            
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    // End Menu Code
+    
+   
+    
+	
+   
+    
+}
